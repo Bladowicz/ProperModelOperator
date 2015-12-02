@@ -5,9 +5,12 @@ import random
 import string
 import sys
 import datetime
+import subprocess
+import shlex
 from abc import ABCMeta, abstractmethod
 
 logging.basicConfig(level=logging.INFO)
+
 
 class NoConfigException(BaseException):
 
@@ -58,6 +61,12 @@ class BaseOperator(object):
     def verify(self):
         pass
 
-    @abstractmethod
+    # @abstractmethod
     def run(self):
         pass
+
+    def _run_wrapped(self, command):
+        with open("", "w") as fwout, open("", "w") as fwerr:
+            process = subprocess.Popen(shlex.split(command), stdout=fwout, stderr=fwerr)
+            print process.returncode
+
