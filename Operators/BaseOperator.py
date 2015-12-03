@@ -17,14 +17,14 @@ class NoConfigException(BaseException):
     def __init__(self, victim, filepath):
         victim.logger.fatal("No fuch file as config file {}".format(filepath))
         super(NoConfigException, self).__init__()
-        sys.exit(1)
+        # sys.exit(1)
 
 class NoAccessConfigException(BaseException):
 
     def __init__(self, filepath):
         logging.fatal("Can't read config file {}".format(filepath))
         super(NoAccessConfigException, self).__init__()
-        sys.exit(2)
+        # sys.exit(2)
 
 
 def randomname(n):
@@ -32,7 +32,6 @@ def randomname(n):
 
 
 class BaseOperator(object):
-    __metaclass__ = ABCMeta
     configpath = ""
     moment = datetime.datetime.now()
 
@@ -61,7 +60,7 @@ class BaseOperator(object):
     def verify(self):
         pass
 
-    # @abstractmethod
+
     def run(self):
         pass
 

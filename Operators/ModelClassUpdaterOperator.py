@@ -10,3 +10,7 @@ class MCUOperator(BaseOperator):
         self.configpath = os.path.join(self.configpath, configname)
         self.logger.info(self.configpath)
         self.config = self._loadconfig(self.configpath)
+
+    def run(self):
+        command = "echo hello world"
+        self._run_wrapped(command)
