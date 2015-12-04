@@ -35,10 +35,12 @@ class BaseOperator(object):
     configpath = ""
     moment = datetime.datetime.now()
 
-    def __init__(self):
+    def __init__(self, priority, **kwargs):
+        self.priority = priority
         self.logger = logging.getLogger(self.__class__.__name__)
         self.stagepath = os.path.join("/tmp", randomname(16))
         self.logger.info("Creation with stage path {}".format(self.stagepath))
+        print kwargs
 
     @classmethod
     def setconfigpath(self, path):

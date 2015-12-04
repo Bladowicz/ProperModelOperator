@@ -1,20 +1,23 @@
 #!/usr/bin/python
 import Operators as O
+import sys
 
 
-def main():
-    controler = O.ModelOperator()
-    O.setConfigPath("/home/gbaranowski/etc")
-    controler.register(O.MCUOperator, "some1.ini")
-    controler.register(O.TopFeatureOperator, "some2.ini")
-    controler.register(O.HClusterOperator, "some3.ini")
-    controler.register(O.HClusterFilterOperator)
-    controler.register(O.VWOperator, "some4.ini")
+def _TMP_run(configfile):
+    controler = O.ModelOperator(configfile)
+    # # O.setConfigPath(startdir)
+
+    sys.exit()
+
     #
     controler.verify()
     #
     # controler.run()
 
+
+def main():
+
+    _TMP_run(sys.argv[1])
 
 
 
