@@ -7,5 +7,5 @@ from HClusterOperator import HClusterOperator
 from TopFeatureOperator import TopFeatureOperator
 
 
-def setConfigPath(path):
-    BaseOperator.setconfigpath(path)
+# def setConfigPath(path):
+#     BaseOperator.setconfigpath(path)

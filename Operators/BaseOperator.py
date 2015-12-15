@@ -8,6 +8,8 @@ import datetime
 import subprocess
 import shlex
 from abc import ABCMeta, abstractmethod
+import hashlib
+import fcntl
 
 logging.basicConfig(level=logging.INFO)
 
@@ -32,33 +34,24 @@ def randomname(n):
 
 
 class BaseOperator(object):
-    configpath = ""
-    moment = datetime.datetime.now()
+    badkeys = ("sectioname", "overseer", "predecesor")
+    rootlogger = logging.getLogger()
+    partA = [x.strip() for x in open("Operators/przymiotniki")]
+    partB = [x.strip() for x in open("Operators/rzeczowniki")]
 
-    def __init__(self):
-        self.logger = logging.getLogger(self.__class__.__name__)
-        self.stagepath = os.path.join("/tmp", randomname(16))
-        self.logger.info("Creation with stage path {}".format(self.stagepath))
-
-    @classmethod
-    def setconfigpath(self, path):
-        self.configpath = path
-
-    def _loadconfig(self, confpath):
-        if not os.path.exists(confpath):
-            raise NoConfigException(self, confpath)
-        if not os.access(confpath, 4):
-            raise NoAccessConfigException(confpath)
-        out = ConfigParser.ConfigParser()
-        out.read(confpath)
-        self.config = out
+    def __init__(self, overseer, sectioname, **kwargs):
+        self.overseer = overseer
+        self.predecesor = None
+        self.sectioname = sectioname
 
     def setpredecesor(self, predecesor):
         self.predecesor = predecesor
-        self.logger.info("Input data will be taken from {}".format(self.predecesor.stagepath))
 
     def verify(self):
-        pass
+        if not os.path.exists(self.overseer.location):
+            self.logger("Can't find location {}".format(self.overseer.location))
+            sys.exit(2)
+        self.outfile = os.path.join(self.overseer.location, self._hash)
 
 
     def run(self):
@@ -69,3 +62,30 @@ class BaseOperator(object):
             process = subprocess.Popen(shlex.split(command), stdout=fwout, stderr=fwerr)
             print process.returncode
 
+    def _makehash(self):
+        m = hashlib.md5()
+        self.hashelements = sorted(self.__dict__.iteritems(), key=lambda x: x[0])
+        word = ''.join([''.join(map(str, x)) for x in self.hashelements if x[0] not in self.badkeys])
+        m.update(word)
+        self._hash = m.hexdigest()
+        self._hashint = int(self._hash, 16)
+
+    def _makename(self):
+        a = self.partA[self._hashint%len(self.partA)]
+        b = self.partB[self._hashint%len(self.partB)]
+        self.hname = "_".join([a, b])
+
+    def ahash(self):
+        self._makehash()
+        self._makename()
+        self.logger = logging.getLogger(self.hname)
+
+    def __repr__(self):
+        return self._hash
+
+    def __str__(self):
+        return "{}\"{}\"".format(self.__class__.__name__, self.hname)
+
+    def describe(self):
+        proper = [" = ".join(map(str, x)) for x in self.hashelements if x[0] not in self.badkeys]
+        self.logger.info(", ".join(proper))
