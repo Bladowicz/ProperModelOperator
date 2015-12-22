@@ -6,6 +6,7 @@ from TopFeatureOperator import TopFeatureOperator
 from HClusterOperator import HClusterOperator
 from HClusterFilterOperator import HClusterFilterOperator
 from NamespaceRemapOperator import NamespaceRemapOperator
+from TimeDelta import TimeDelta
 import logging
 import sys
 import os
@@ -24,15 +25,7 @@ operators["topfeature"] = TopFeatureOperator
 operators["remap"] = NamespaceRemapOperator
 operators["hcluster"] = HClusterOperator
 operators["hclustertransate"] = HClusterFilterOperator
-
-# operators = {
-#     "vw": VWOperator,
-#     "mcu": MCUOperator,
-#     "topfeature": TopFeatureOperator,
-#     "remap": NamespaceRemapOperator,
-#     "hcluster": HClusterOperator,
-#     "hclustertransate": HClusterFilterOperator,
-# }
+operators["time"] = TimeDelta
 
 
 
@@ -75,7 +68,7 @@ class ModelOperator(object):
         self.name = self.config.get("main", "name")
         self.location = self.config.get("main", "file_location")
         self.workdir = self.config.get("main", "work_location")
-        self.logger = logging.getLogger(self.name)
+        self.logger = logging.getLogger("[{:_^19}]".format(self.name))
         if not os.path.exists(self.workdir):
             os.makedirs(self.workdir)
             self.logger.warn("Workdir {} did not exist, so it was created.".format(self.workdir))

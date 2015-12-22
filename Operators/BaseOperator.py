@@ -80,9 +80,17 @@ class BaseOperator(object):
                     fcntl.flock(fw, fcntl.LOCK_UN)
 
     def _run_wrapped(self, command):
-        with open("", "w") as fwout, open("", "w") as fwerr:
-            process = subprocess.Popen(shlex.split(command), stdout=fwout, stderr=fwerr)
-            print process.returncode
+        process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        if process.returncode != 0:
+            self.logger.fatal("Bad command output")
+            self.logger.fatal(err)
+            sys.exit(201)
+        else:
+            if out != "":
+                self.logger.info("[OUT]" + out)
+            if err != "":
+                self.logger.info("[ERR]" + err)
 
     # def _work(self):
     #     self.logger.info("I did my work")
@@ -105,7 +113,10 @@ class BaseOperator(object):
     def ahash(self):
         self._makehash()
         self._makename()
-        self.logger = logging.getLogger(self.hname)
+        n = self.__class__.__name__
+        if "Operator" in n:
+            n = n.replace("Operator", "")
+        self.logger = logging.getLogger("[{}_{:_^12}]".format(self.overseer.name, n))
 
     def __repr__(self):
         return self._hash
@@ -115,4 +126,14 @@ class BaseOperator(object):
 
     def describe(self):
         proper = [" = ".join(map(str, x)) for x in self.hashelements if x[0] not in self.badkeys]
-        # self.logger.info(", ".join(proper))
+        #self.logger.info(", ".join(proper))
+
+    def _findpred(self, name):
+            pred = self.predecesor
+            while True:
+                if pred.__class__.__name__ == "" or pred is None:
+                    self.logger.fatal("Did not found predecesor of class [{}]".format(name))
+                    sys.exit(129)
+                elif pred.__class__.__name__ == name:
+                    return pred
+                pred = pred.predecesor
