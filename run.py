@@ -1,10 +1,11 @@
 #!/usr/bin/python
 import Operators as O
 import os
+import sys
 
 
-def main():
-    controler = O.ModelOperator("VWT.default.ini")
+def main(config_file):
+    controler = O.ModelOperator(config_file)
     controler.register()
     controler.verify()
     controler.summarize()
@@ -17,4 +18,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
