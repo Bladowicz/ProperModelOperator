@@ -7,6 +7,7 @@ from HClusterOperator import HClusterOperator
 from HClusterFilterOperator import HClusterFilterOperator
 from NamespaceRemapOperator import NamespaceRemapOperator
 from TimeDelta import TimeDelta
+from Linker import Linker
 import logging
 import sys
 import os
@@ -26,6 +27,7 @@ operators["remap"] = NamespaceRemapOperator
 operators["hcluster"] = HClusterOperator
 operators["hclustertransate"] = HClusterFilterOperator
 operators["time"] = TimeDelta
+operators["link"] = Linker
 
 
 

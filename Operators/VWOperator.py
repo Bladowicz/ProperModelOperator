@@ -18,7 +18,6 @@ class VWOperator(BaseOperator):
             self.l2 = self.conf["l2"] ##kwargs.pop("min_class")
             self.hash_length = self.conf["hash_length"] ##kwargs.pop("min_class")
             self.loss_function = self.conf["loss_function"] ##kwargs.pop("min_class")
-
             self.tags = self.conf["tags"] ##kwargs.pop("min_class")
         except KeyError as e:
             self.rootlogger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
@@ -29,6 +28,7 @@ class VWOperator(BaseOperator):
         if os.path.exists(self.cache_file):
             os.remove(self.cache_file)
         command = self.makecommand(self.predecesor.outfile)
+        self.logfile = self.outfile + ".log"
         self.logger.info("[COMMAND] {}".format(command))
         self._run_wrapped(command)
 

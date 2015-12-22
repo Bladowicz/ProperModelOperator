@@ -80,20 +80,17 @@ class BaseOperator(object):
                     fcntl.flock(fw, fcntl.LOCK_UN)
 
     def _run_wrapped(self, command):
+
         process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
         if process.returncode != 0:
             self.logger.fatal("Bad command output")
-            self.logger.fatal(err)
             sys.exit(201)
-        else:
-            if out != "":
-                self.logger.info("[OUT]" + out)
-            if err != "":
-                self.logger.info("[ERR]" + err)
-
-    # def _work(self):
-    #     self.logger.info("I did my work")
+        if hasattr(self, "logfile"):
+            with open(self.logfile, "a") as fw:
+                self.logger.info("Writing output to {}".format(self.logfile))
+                fw.write(out + "\n")
+                fw.write(err + "\n")
 
     def _makehash(self):
         m = hashlib.md5()
