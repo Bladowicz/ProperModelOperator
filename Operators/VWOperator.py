@@ -28,8 +28,8 @@ class VWOperator(BaseOperator):
         self.cache_file = self.outfile + ".cache"
         if os.path.exists(self.cache_file):
             os.remove(self.cache_file)
-        command = self.makecommand(self.predecesor.outfile)
         self.logfile = self.outfile + ".log"
+
         last_mcu = self._findpred("MCUOperator")
         self.logger.info("LAST MCU PARAMS "+ " ".join(last_mcu.parameters))
         if "gzip" in last_mcu.parameters:
@@ -37,6 +37,8 @@ class VWOperator(BaseOperator):
             if "compressed" not in self.tags:
                 self.logger.info("VW compressed added")
                 self.tags.append("compressed")
+
+        command = self.makecommand(self.predecesor.outfile)
         self.logger.info("[COMMAND] {}".format(command))
         self._run_wrapped(command)
 
