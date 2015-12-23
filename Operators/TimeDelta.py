@@ -37,7 +37,7 @@ class TimeDelta(BaseOperator):
             self.files = self._findfiles()
             self.filecount = len(self.files)
             if self.filecount ==0:
-                self.rootlogger.fatal("No files found")
+                self.logger.fatal("No files found")
                 sys.exit(128)
             else:
                 self.size = sum([os.path.getsize(x) for x in self.files])
@@ -45,7 +45,7 @@ class TimeDelta(BaseOperator):
 
 
         except KeyError as e:
-            self.rootlogger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
+            self.logger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
             sys.exit(1)
 
 
@@ -102,7 +102,7 @@ class TimeDelta(BaseOperator):
         except IndexError:
             pass
         except Exception as e:
-            self.rootlogger.fatal("Bad buffer - {} : {}".format(self.buffer, str(e)))
+            self.logger.fatal("Bad buffer - {} : {}".format(self.buffer, str(e)))
             raise
         return now
 
