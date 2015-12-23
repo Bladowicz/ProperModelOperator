@@ -17,7 +17,7 @@ class MCUOperator(BaseOperator):
             self.countries = self.conf["countries"]
             self.timestamp = self.conf["timestamp"]
             self.namespacemap = self.conf["namespacemap"]
-            self.parameters = self.conf["parameters"]
+            self.parameters = self.conf["parameters"].split(",")
 
 
 
