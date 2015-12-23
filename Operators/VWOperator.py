@@ -19,6 +19,7 @@ class VWOperator(BaseOperator):
             self.hash_length = self.conf["hash_length"] ##kwargs.pop("min_class")
             self.loss_function = self.conf["loss_function"] ##kwargs.pop("min_class")
             self.tags = self.conf["tags"] ##kwargs.pop("min_class")
+            self.ignored = self.conf["ignored"]
         except KeyError as e:
             self.rootlogger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
             sys.exit(1)
@@ -34,7 +35,7 @@ class VWOperator(BaseOperator):
 
     def makecommand(self, infile):
         options = {}
-        command = "{starter} {infile} -f {outfile} {loss_function} {hash_length} {l2} {l1} {l} {power_t} {passes} {tags} {cache_file}"
+        command = "{starter} {infile} -f {outfile} {loss_function} {hash_length} {l2} {l1} {l} {power_t} {passes} {tags} {cache_file} {ignore}"
         options["starter"] = self.starter
         options["infile"] = infile
         options["outfile"] = self.outfile
@@ -43,6 +44,7 @@ class VWOperator(BaseOperator):
         options["l"] = optionalize("-l {}", self.l)
         options["l1"] = optionalize("--l1 {}", self.l1)
         options["l2"] = optionalize("--l2 {}", self.l2)
+        options["ignore"] = optionalize("--ignore {}", self.ignored)
         options["power_t"] = optionalize("--power_t {}", self.power_t)
         options["passes"] = optionalize("--passes {}", self.passes)
         options["tags"] = " ".join(["--" + X for X in self.tags.split(",")])
