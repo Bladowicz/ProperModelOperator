@@ -37,7 +37,7 @@ class TimeDelta(BaseOperator):
             self.files = self._findfiles()
             self.filecount = len(self.files)
             if self.filecount ==0:
-                self.logger.fatal("No files found")
+                self.logger.fatal("No files found in {}".format(self.overseer.location))
                 sys.exit(128)
             else:
                 self.size = sum([os.path.getsize(x) for x in self.files])
