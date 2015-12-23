@@ -88,7 +88,7 @@ class BaseOperator(object):
             sys.exit(201)
         if hasattr(self, "logfile"):
             with open(self.logfile, "a") as fw:
-                self.logger.info("Writing output to {}".format(self.logfile))
+                self.logger.info("Logging command output to file {}".format(self.logfile))
                 fw.write(out + "\n")
                 fw.write(err + "\n")
 

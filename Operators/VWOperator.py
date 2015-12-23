@@ -18,7 +18,7 @@ class VWOperator(BaseOperator):
             self.l2 = self.conf["l2"] ##kwargs.pop("min_class")
             self.hash_length = self.conf["hash_length"] ##kwargs.pop("min_class")
             self.loss_function = self.conf["loss_function"] ##kwargs.pop("min_class")
-            self.tags = self.conf["tags"] ##kwargs.pop("min_class")
+            self.tags = self.conf["tags"].split(",") ##kwargs.pop("min_class")
             self.ignored = self.conf["ignored"]
         except KeyError as e:
             self.rootlogger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
@@ -31,6 +31,9 @@ class VWOperator(BaseOperator):
         command = self.makecommand(self.predecesor.outfile)
         self.logfile = self.outfile + ".log"
         self.logger.info("[COMMAND] {}".format(command))
+        if "gzip" in self._findpred("MCUOperator").parameters:
+            if "compressed" not in self.tags:
+                self.tags.append("compressed")
         self._run_wrapped(command)
 
     def makecommand(self, infile):
@@ -47,7 +50,7 @@ class VWOperator(BaseOperator):
         options["ignore"] = optionalize("--ignore {}", self.ignored)
         options["power_t"] = optionalize("--power_t {}", self.power_t)
         options["passes"] = optionalize("--passes {}", self.passes)
-        options["tags"] = " ".join(["--" + X for X in self.tags.split(",")])
+        options["tags"] = " ".join(["--" + X for X in self.tags])
         options["cache_file"] = optionalize("--cache_file {}", self.cache_file)
         return command.format(**options)
 
