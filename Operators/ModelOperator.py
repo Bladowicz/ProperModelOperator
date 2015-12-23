@@ -33,6 +33,8 @@ operators["link"] = Linker
 
 class ModelOperator(object):
 
+
+
     def __init__(self, configfile):
         self.operators = []
         self.tempfiles = []
@@ -70,7 +72,16 @@ class ModelOperator(object):
         self.name = self.config.get("main", "name")
         self.location = self.config.get("main", "file_location")
         self.workdir = self.config.get("main", "work_location")
-        self.logger = logging.getLogger("[{:_^19}]".format(self.name))
+        logger = logging.getLogger(self.name)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+                '%(asctime)s [%(name)-12s] [%(levelname)-6s] %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+        handler.setFormatter(formatter)
+        logger.propagate = False
+        logger.addHandler(handler)
+        logger.setLevel(logging.DEBUG)
+        #
+        self.logger = logger
         if not os.path.exists(self.workdir):
             os.makedirs(self.workdir)
             self.logger.warn("Workdir {} did not exist, so it was created.".format(self.workdir))

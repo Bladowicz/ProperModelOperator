@@ -10,9 +10,32 @@ import shlex
 from abc import ABCMeta, abstractmethod
 import hashlib
 import fcntl
+import logging
+from logging.config import dictConfig
 
-logging.basicConfig(level=logging.INFO)
 
+
+logging_config = dict(
+    version = 1,
+    formatters = {
+        'f': {'format':
+              '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'}
+        },
+    handlers = {
+        'h': {'class': 'logging.StreamHandler',
+              'formatter': 'f',
+              'level': logging.DEBUG}
+        },
+    loggers = {
+        'root': {'handlers': ['h'],
+                 'level': logging.DEBUG}
+        }
+)
+
+
+# logging.basicConfig(level=logging.INFO)
+#
+# logging.Logger.setLevel()
 
 class NoConfigException(BaseException):
 
@@ -35,9 +58,17 @@ def randomname(n):
 
 class BaseOperator(object):
     badkeys = ("sectioname", "overseer", "predecesor")
-    rootlogger = logging.getLogger()
-    partA = [x.strip() for x in open("Operators/przymiotniki")]
-    partB = [x.strip() for x in open("Operators/rzeczowniki")]
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+            '%(asctime)s %(name)-12s [%(levelname)-6s] %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False
+    d = os.path.dirname(os.path.abspath(__file__))
+    partA = [x.strip() for x in open(os.path.join(d, "przymiotniki"))]
+    partB = [x.strip() for x in open(os.path.join(d, "rzeczowniki"))]
 
     def __init__(self, overseer, sectioname, conf):
         self.overseer = overseer
@@ -115,6 +146,8 @@ class BaseOperator(object):
             n = n.replace("Operator", "")
         self.logger = logging.getLogger("[{}_{:_^12}]".format(self.overseer.name, n))
 
+
+
     def __repr__(self):
         return self._hash
 
@@ -134,3 +167,12 @@ class BaseOperator(object):
                 elif pred.__class__.__name__ == name:
                     return pred
                 pred = pred.predecesor
+
+
+
+
+
+
+#
+# logger = logging.getLogger()
+# logger.debug('often makes a very good meal of %s', 'visiting tourists')

@@ -31,6 +31,7 @@ class MCUOperator(BaseOperator):
         self.logger.info("[COMMAND] {}".format(command))
         self._run_wrapped(command)
 
+
     def makecommand(self):
         options = {}
         command = "{starter} {eventlog} {outfile} {successclass} {minclass} {mintimestamp} {namespace} {countries} {parameters} {in_files}"

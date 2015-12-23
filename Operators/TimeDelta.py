@@ -15,6 +15,7 @@ class TimeDelta(BaseOperator):
     periods = ["months", "days", "hours", "minutes", "seconds"]
     period = ["month", "day", "hour", "minute", "second"]
     translate = {"s":-1, "m":-2, "h":-3, "d":-4}
+    suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
     def __init__(self, *args, **kwargs):
         super(TimeDelta, self).__init__(*args, **kwargs)
@@ -122,7 +123,7 @@ class TimeDelta(BaseOperator):
     def run(self):
         self.logger.info("Looking for files between {} and {}".format(self.od, self.do))
 
-        self.logger.info("Found {} files with total size {:,}.".format(self.filecount, self.size))
+        self.logger.info("Found {} files with total size {}.".format(self.filecount, self.humansize(self.size)))
 
     def _findfiles(self):
         files = glob.glob(os.path.join(self.overseer.location, "modelData.log.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9].gz"))
@@ -135,3 +136,12 @@ class TimeDelta(BaseOperator):
         a = self.od <= d <= self.do
         # print a, " {} <= {} <= {}".format(self.od, d, self.do)
         return self.od <= d <= self.do
+
+    def humansize(self, nbytes):
+        if nbytes == 0: return '0 B'
+        i = 0
+        while nbytes >= 1024 and i < len(self.suffixes)-1:
+            nbytes /= 1024.
+            i += 1
+        f = ('%.2f' % nbytes).rstrip('0').rstrip('.')
+        return '%s %s' % (f, self.suffixes[i])
