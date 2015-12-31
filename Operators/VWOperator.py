@@ -31,14 +31,12 @@ class VWOperator(BaseOperator):
         self.logfile = self.outfile + ".log"
 
         last_mcu = self._findpred("MCUOperator")
-        self.logger.info("LAST MCU PARAMS "+ " ".join(last_mcu.parameters))
         if "gzip" in last_mcu.parameters:
-            self.logger.info("MCU had gzip")
             if "compressed" not in self.tags:
                 self.logger.info("Last MCU had 'gzip' tag. Adding parameter 'compressed' to VW")
                 self.tags.append("compressed")
-
-        command = self.makecommand(self.predecesor.outfile)
+        self.infile = self.predecesor.outfile
+        command = self.makecommand(self.infile)
         self.logger.info("[COMMAND] {}".format(command))
         self._run_wrapped(command)
 
