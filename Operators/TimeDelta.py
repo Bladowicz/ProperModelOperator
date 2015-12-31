@@ -27,6 +27,7 @@ class TimeDelta(BaseOperator):
             self.delta = self.conf["delta"]
             self.buffer = self.conf["buffer"]
             self.accuracy = self.conf["accuracy"]
+            self.pattern = self.conf["filepattern"]
             if self.calculationmethod == "delta":
                 self._calculatebydelta()
             elif self.calculationmethod == "range":
@@ -126,13 +127,16 @@ class TimeDelta(BaseOperator):
         self.logger.info("Found {} files with total size {}.".format(self.filecount, self.humansize(self.size)))
 
     def _findfiles(self):
-        files = glob.glob(os.path.join(self.overseer.location, "modelData.log.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9].gz"))
-        # self.overseer.logger.info("Hello {}".format())
+        pattern = self.pattern.replace("%Y", "[0-9]"*4).replace("%m", "[0-9]"*2).replace("%d", "[0-9]"*2).replace("%H", "[0-9]"*2)
+        print os.path.join(self.overseer.location, pattern)
+        files = glob.glob(os.path.join(self.overseer.location,
+                                   pattern))
+        # self.overseer.logger.info("Hello {}".format())#
         return sorted(filter(self.dateFilter ,files))
 
     def dateFilter(self, filepath):
         filename = os.path.basename(filepath)
-        d = datetime.datetime.strptime(filename, "modelData.log.%Y-%m-%d-%H.gz")
+        d = datetime.datetime.strptime(filename, self.pattern)
         a = self.od <= d <= self.do
         # print a, " {} <= {} <= {}".format(self.od, d, self.do)
         return self.od <= d <= self.do

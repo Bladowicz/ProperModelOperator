@@ -18,13 +18,24 @@ class Spliter(BaseOperator):
             self.rootlogger.fatal("In config section {} there is no value for {}".format(self.sectioname, str(e)))
             sys.exit(1)
 
+
+
     def _work(self):
+        self.predfile = self.outfile + ".predictionSample"
         self.pastVW = self._findpred("VWOperator")
-        c = Counter()
-        i = 0
+        pC, tC, c = Counter(), Counter(), Counter()
         for nr, line in enumerate(gzip.open(self.pastVW.infile)):
             c[line[:2]] += 1
-        self.classes = c + 1
-        self.linecount = nr
-        self.logger.info("Total count: {}, where {}".format(nr, ", ".join(["{}: {}".format(k, v) for k,v in c.iteritems()])))
-
+        self.linecount = nr + 1
+        self.logger.info("Total count: {}, where {}".format(self.linecount, ", ".join(["{}: {}".format(k, v) for k,v in c.iteritems()])))
+        self.part = (self.linecount / self.parts) * (self.parts - 1)
+        with gzip.open(self.outfile, "w") as fw, gzip.open(self.predfile, "w") as fwPred:
+            for nr, line in enumerate(gzip.open(self.pastVW.infile)):
+                if nr <= self.part:
+                    fw.write(line + "\n")
+                    tC[line[:2]] += 1
+                else:
+                    fwPred.write(line + "\n")
+                    pC[line[:2]] += 1
+        self.logger.info("Training file count: {}, where {}".format(sum(tC.itervalues()),  ", ".join(["{}: {}".format(k, v) for k,v in tC.iteritems()]) ))
+        self.logger.info("Prediction sample file count: {}, where {}".format(sum(pC.itervalues()), ", ".join(["{}: {}".format(k, v) for k,v in pC.iteritems()]) ))

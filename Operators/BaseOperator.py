@@ -160,9 +160,11 @@ class BaseOperator(object):
 
     def _findpred(self, name):
             pred = self.predecesor
+            i = 0
             while True:
+                i += 1
                 if pred.__class__.__name__ == "" or pred is None:
-                    self.logger.fatal("Did not found predecesor of class [{}]".format(name))
+                    self.logger.fatal("Did not found predecesor of class [{}] in {} steps".format(name, i))
                     sys.exit(129)
                 elif pred.__class__.__name__ == name:
                     return pred
