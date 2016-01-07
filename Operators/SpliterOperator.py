@@ -24,6 +24,7 @@ class Spliter(BaseOperator):
         self.predfile = self.outfile + ".predictionSample"
         self.pastVW = self._findpred("VWOperator")
         pC, tC, c = Counter(), Counter(), Counter()
+        self.logger.info("Spliter {}".format(self.pastVW.infile))
         for nr, line in enumerate(gzip.open(self.pastVW.infile)):
             c[line[:2]] += 1
         self.linecount = nr + 1
