@@ -9,6 +9,7 @@ from NamespaceRemapOperator import NamespaceRemapOperator
 from TimeDelta import TimeDelta
 from Linker import Linker
 from SpliterOperator import Spliter
+from Predictor import Predictor
 import logging
 import sys
 import os
@@ -30,6 +31,7 @@ operators["hclustertransate"] = HClusterFilterOperator
 operators["time"] = TimeDelta
 operators["link"] = Linker
 operators["spliter"] = Spliter
+operators["predict"] = Predictor
 
 
 

@@ -128,17 +128,14 @@ class TimeDelta(BaseOperator):
 
     def _findfiles(self):
         pattern = self.pattern.replace("%Y", "[0-9]"*4).replace("%m", "[0-9]"*2).replace("%d", "[0-9]"*2).replace("%H", "[0-9]"*2)
-        print os.path.join(self.overseer.location, pattern)
-        files = glob.glob(os.path.join(self.overseer.location,
-                                   pattern))
+
+        files = glob.glob(os.path.join(self.overseer.location, pattern))
         # self.overseer.logger.info("Hello {}".format())#
         return sorted(filter(self.dateFilter ,files))
 
     def dateFilter(self, filepath):
         filename = os.path.basename(filepath)
         d = datetime.datetime.strptime(filename, self.pattern)
-        a = self.od <= d <= self.do
-        # print a, " {} <= {} <= {}".format(self.od, d, self.do)
         return self.od <= d <= self.do
 
     def humansize(self, nbytes):
